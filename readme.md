@@ -57,19 +57,19 @@ output:
 This assembler supports several custom helper functions that are resolved to valid opcodes and
 thus valid bytecode at compile time. The following chapters explain those utilitiy functions.
 
-### Stack Peak (`stack_peak_1` to `stack_peak_12`)
-The `stack_peak_*` helper functions can be used to inspect the stack during execution. The 
-function will write the stack element at the specfied stack position to the log. Speaking in
-Solidity, this is similar to emitting the following event: `StackPeak(uint256 pos, bytes32 data)`. Since this also writes to memory, it might overwrite data in memory
-that has already been stored there from previous steps, leading to an error in the following executions. Thus, it is recommended to add a `stop` after calling `stack_peak_*` or serveral `stack_peak_*` commands to halt the execution after the stack was inspected. Since this function was designed for debugging sessions, stopping after logging the stack should not be an issue.
-Right now, this only supports inspecting the first 12 (of 16) stack elements (`stack_peak_1` to `stack_peak_12`). The reason is, that we need to have space on the stack for the logging an returning to the calling position after the logging (the first 4 stack elements in the `stack_peak_*` are reserved for this functionality) (<i>dev note: maybe we could swap the data we need for logging and routine returning temporarly to memory in order access the full stack.</i>).
+### Stack Peek (`stack_peek_1` to `stack_peek_12`)
+The `stack_peek_*` helper functions can be used to inspect the stack during execution. The 
+function will write the stack element at the specfied stack position to the log. Speeking in
+Solidity, this is similar to emitting the following event: `Stackpeek(uint256 pos, bytes32 data)`. Since this also writes to memory, it might overwrite data in memory
+that has already been stored there from previous steps, leading to an error in the following executions. Thus, it is recommended to add a `stop` after calling `stack_peek_*` or serveral `stack_peek_*` commands to halt the execution after the stack was inspected. Since this function was designed for debugging sessions, stopping after logging the stack should not be an issue.
+Right now, this only supports inspecting the first 12 (of 16) stack elements (`stack_peek_1` to `stack_peek_12`). The reason is, that we need to have space on the stack for the logging an returning to the calling position after the logging (the first 4 stack elements in the `stack_peek_*` are reserved for this functionality) (<i>dev note: maybe we could swap the data we need for logging and routine returning temporarly to memory in order access the full stack.</i>).
 
 Example:
 ```
 0x01
 0x02
-stack_peak_1
-stack_peak_2
+stack_peek_1
+stack_peek_2
 stop
 ```
 would lead to the following logging (events):
