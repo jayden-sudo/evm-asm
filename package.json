@@ -1,15 +1,25 @@
 {
-  "name": "solcasm",
-  "version": "1.2.1",
+  "name": "solcasm2",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/commonjs/index.js",
   "module": "dist/esm/index.js",
   "bin": "dist/commonjs/run.js",
-  "homepage": "https://github.com/RafaelSalguero/evm-assembler",
+  "homepage": "https://github.com/sebastiandine/evm-asm",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RafaelSalguero/evm-assembler"
+    "url": "https://github.com/sebastiandine/evm-asm"
   },
+  "contributors": [
+    {
+      "name": "Rafael Salguero",
+      "url": "https://github.com/RafaelSalguero"
+    },
+    {
+      "name": "Sebastian Dine",
+      "url": "https://github.com/sebastiandine"
+    }
+  ],
   "scripts": {
     "test": "jest",
     "buildCommonJs": "tsc -m commonjs -outDir dist/commonjs -d false",
@@ -36,7 +46,7 @@
     "Ethereum",
     "Solidity"
   ],
-  "author": "Rafael Salguero",
+  "author": "Sebastian Dine",
   "license": "MIT",
   "dependencies": {
     "simple-pure-utils": "^2.0.37"

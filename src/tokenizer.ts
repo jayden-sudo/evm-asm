@@ -1,6 +1,7 @@
 import { opCodes } from "./opcodes";
 import type { Constant, HexToken, LabelDef, LabelOp, LabelOpName, OpCode, OpCodeName, Token } from "./types";
 import { assertUnreachable, flatten, mapMany } from "simple-pure-utils";
+import { helpers } from "./helpers";
 
 function removeComments(code: string): string {
     const multiLineComment = /\/\*.*\*\//g;
@@ -22,13 +23,37 @@ export function reduceOpSpaces(code: string): string {
     return code;
 }
 
+/**
+ * Replace the invocation of helper functions with their respective opcodes to 
+ * properly call the corresponding helper routine.
+ */
+function resolveHelperFunctionCall(command: string, index: number): string|string[] {
+    if (Object.keys(helpers).includes(command)) {
+        return helpers[command].call(index);
+    }
+    return command;
+
+}
+
+/**
+ * Add the implementation of all used helper functions at the end of the code.
+ */
+function appendHelperFunctionImplementation(commandList: string[]): string[] {
+    let usedHelpers = commandList.filter(command => Object.keys(helpers).includes(command));
+    usedHelpers = [... new Set(usedHelpers)]; // remove duplicates
+    let helperSection: string[] = [];
+    usedHelpers.forEach(helper => {
+        helperSection.push(...helpers[helper].implementation())
+    });
+    return commandList.flatMap(command => command.startsWith("auxdata") ? helperSection.concat([command]) : command);
+
+}
+
 export function tokenize(code: string): Token[] {
-    return flatten(
-        reduceSpaces(reduceOpSpaces(removeComments(code)))
-            .split(" ")
-            .filter(x => x != "")
-            .map(tokenizePart)
-    );
+    let commandList = reduceSpaces(reduceOpSpaces(removeComments(code))).split(" ").filter(x => x != "")
+    commandList = commandList.flatMap(resolveHelperFunctionCall);
+    commandList = appendHelperFunctionImplementation(commandList);
+    return flatten(commandList.map(tokenizePart));
 }
 
 export function constantByteSize(hex: string): number {
@@ -210,6 +235,5 @@ function tokenizePart(part: string): Token[] {
 }
 
 function tokenizeParams(params: string): Token[] {
-    return flatten(params.split(/,\s*/).reverse().map(tokenize));
+    return flatten(params.split(/,(?![^()]*\))/).reverse().map(tokenize));
 }
-
