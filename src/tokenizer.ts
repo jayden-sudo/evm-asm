@@ -158,10 +158,15 @@ function tokenizeLabelOp(code: string): LabelOp | null {
 }
 
 function fixHex(hex: string): string {
-    return "0x" + (hex.length % 2 == 1 ? "0" : "") + hex.substr(2).toLowerCase();
+    return "0x" + (hex.length % 2 == 1 ? "0" : "") + hex.substring(2).toLowerCase();
 }
 
 export function pushConstant(hex: string): HexToken[] {
+    if (hex === "0x00" || hex === "0x0") {
+        return [
+            throwIfNull(tokenizeOpCode("push0"))
+        ]
+    }
     const size = constantByteSize(hex);
     return [
         throwIfNull(tokenizeOpCode("push" + size)),
